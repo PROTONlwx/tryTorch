@@ -27,9 +27,9 @@ train_data = datasets.ImageFolder(train_dir, transform = train_transforms)
 valid_data = datasets.ImageFolder(valid_dir, transform = validation_test_transforms)
 test_data = datasets.ImageFolder(test_dir, transform = validation_test_transforms)
 
-train_loader = torch.utils.data.DataLoader(train_data, batch_size=8, shuffle=True)
-valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=8)
-test_loader = torch.utils.data.DataLoader(test_data, batch_size=8)
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=64, shuffle=True)
+valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=64)
+test_loader = torch.utils.data.DataLoader(test_data, batch_size=64)
 
 with open('cat_to_name.json', 'r') as f:
     cat_to_name = json.load(f)
