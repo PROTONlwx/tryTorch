@@ -52,7 +52,7 @@ model.to(device)
 
 criterion = nn.NLLLoss()
 optimizer = optim.Adam(model.classifier.parameters(), lr=0.003)
-epochs = 1
+epochs = 3
 steps = 0
 running_loss = 0
 print_every = 40
