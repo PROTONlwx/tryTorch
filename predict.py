@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 import json
 
 def load_checkpoint(filepath):
+    """
+    This function construct a pretrained model for predicting flower type.
+    :param filepath: the relative path to the checkpoint file
+    :return: model recovered from the information in checkpoint
+    """
     checkpoint= torch.load(filepath, map_location=lambda storage, loc: storage)
     model = getattr(models, checkpoint['arch'])(pretrained=True)
     model.class_to_idx = checkpoint['class_to_idx']
@@ -16,6 +21,12 @@ def load_checkpoint(filepath):
 
 
 def process_image(image):
+    """
+    This function make sure the shortest side of PIL Image is 256px, and preserve the ratio.
+    crop the center 224*224 pixel, transpose the image array to make the RGB info the first dimension.
+    :param image: PIL Image that is transformed for predicting.
+    :return: the transformed image in numpy array.
+    """
     width, height = image.size
     ratio = width / height
     if width < height:
@@ -33,29 +44,14 @@ def process_image(image):
 
     return np.transpose(np_image, (2, 0, 1))
 
-
-def imshow(image, ax=None, title=None):
-    """Imshow for Tensor."""
-    if ax is None:
-        fig, ax = plt.subplots()
-
-    # PyTorch tensors assume the color channel is the first dimension
-    # but matplotlib assumes is the third dimension
-    image = np.transpose(image, (1, 2, 0))
-
-    # Undo preprocessing
-    mean = np.array([0.485, 0.456, 0.406])
-    std = np.array([0.229, 0.224, 0.225])
-    image = std * image + mean
-
-    # Image needs to be clipped between 0 and 1 or it looks like noise when displayed
-    image = np.clip(image, 0, 1)
-
-    ax.imshow(image)
-
-    return ax
-
 def predict(image_path, model, topk=5):
+    """
+    The function predict the type of flower of the given image and give the top k probabilities
+    :param image_path: the path to the image to be predicted
+    :param model: the model constructed to make preidction
+    :param topk: the number of probabilities to be returned from largest to smallest
+    :return: two tensor representing probability and index of the corresponding probability in a tuple
+    """
     model.eval()
     with torch.no_grad():
         img = Image.open(image_path)
@@ -67,6 +63,13 @@ def predict(image_path, model, topk=5):
 
 
 def get_key(my_dict, val):
+    """
+    This function finds the key of a value in a dictionary.
+    :param my_dict: The dictionary object to look for key
+    :param val: the value of the target key
+    :return: the first target key corresponding to the given value
+             or string saying "key doesn't exist"
+    """
     for key, value in my_dict.items():
         if val == value:
             return key
@@ -74,6 +77,11 @@ def get_key(my_dict, val):
     return "key doesn't exist"
 
 def idx_to_name(idx):
+    """
+    turn the index of the highest probabilities to actual name of the flower.
+    :param idx: the index of the probability
+    :return: the flower name corresponding to the index.
+    """
     class_to_idx = testmodel.class_to_idx
     flower_class = [get_key(class_to_idx, x) for x in idx.numpy()[0]]
     cat_to_name = json.load(open('./cat_to_name.json', 'r'))
