@@ -122,4 +122,5 @@ checkpoint = {'arch': 'densenet121',
               'epochs': epochs,
               'state_dict': model.state_dict(),
               'optimizer_state_dict': optimizer.state_dict()}
+
 torch.save(checkpoint,'checkpointtest.pth')
